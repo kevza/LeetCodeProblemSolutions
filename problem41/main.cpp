@@ -9,7 +9,7 @@ public:
   int firstMissingPositive(vector<int> &nums) {
     int n = nums.size();
     for (int i = 0; i < n; i++) {
-      int next = nums[i] - 1;
+      int64_t next = (int64_t)nums[i] - 1;
       nums[i] = -1;
       while (next >= 0 && next < n && next != nums[next] - 1) {
         int t = nums[next] - 1;
