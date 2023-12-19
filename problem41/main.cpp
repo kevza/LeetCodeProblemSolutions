@@ -8,15 +8,17 @@ class Solution {
 public:
   int firstMissingPositive(vector<int> &nums) {
     int n = nums.size();
-    vector<int> a(n, 0);
-    for (auto v : nums) {
-      int64_t i = (int64_t)v - 1;
-      if (i >= 0 && i < n) {
-        a[i] = 1;
+    for (int i = 0; i < n; i++) {
+      int next = nums[i] - 1;
+      nums[i] = -1;
+      while (next >= 0 && next < n && next != nums[next] - 1) {
+        int t = nums[next] - 1;
+        nums[next] = next + 1;
+        next = t;
       }
     }
     for (int i = 0; i < n; i++) {
-      if (a[i] == 0) {
+      if (nums[i] < 0) {
         return i + 1;
       }
     }
@@ -39,6 +41,8 @@ TEST_P(TestSolution, Test) {
 }
 
 INSTANTIATE_TEST_SUITE_P(LeetcodeSolution, TestSolution,
-                         testing::Values((Params){{1, 2, 0}, 3},
+                         testing::Values((Params){{1, 1}, 2},
+                                         (Params){{3, 4, -1, 1}, 2},
+                                         (Params){{1, 2, 0}, 3},
                                          (Params){{7, 8, 9, 11, 12}, 1},
                                          (Params){{1}, 2}));
