@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stack>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -11,11 +12,22 @@ namespace {
     bool isMatch(string s, string p) {
         bool matches = true;
         stack<pair<int, int>> st;
+        bool checked[s.length()][p.length()];
+        fill(&checked[0][0], &checked[s.length()][p.length()],false);
+        
+
         st.push(make_pair(0, 0));
         while (!st.empty())
         {
             auto [string_index, pattern_index] = st.top();
             st.pop();
+            if (checked[string_index][pattern_index])
+            {
+              continue;
+            }
+            checked[string_index][pattern_index] = true;
+
+            bool testResult = true;
             while (string_index < s.length() && pattern_index < p.length())
             {
                 char _s = s[string_index];
@@ -34,13 +46,21 @@ namespace {
                 }
                 else 
                 {
+                  testResult = false;
                   break; 
                 }
             }
-
-            if (string_index == s.length() && (pattern_index == p.length() || (pattern_index == p.length() - 1 && p[pattern_index] == '*')))
+           
+            if (testResult)
             {
-                return true;
+              while (p[pattern_index] == '*') {
+                pattern_index++;
+              }
+
+              if (string_index == s.length() && pattern_index == p.length()) 
+              {
+                  return true;
+              }
             }
         }
         return false;
@@ -65,10 +85,11 @@ TEST_P(TestSolution, Test) {
 
 
 INSTANTIATE_TEST_SUITE_P(LeetcodeSolution, TestSolution,
-                         testing::Values( // (Params){"a", "a", true},
-                                          // (Params){"", "", true},
-                                          // (Params){"", "a", false},
-                                          // (Params){"b", "a", false},
+                         testing::Values( (Params){"a", "a", true},
+                                          (Params){"", "", true},
+                                          (Params){"", "a", false},
+                                          (Params){"b", "a", false},
                                           (Params){"aba", "a*", true},
-                                          (Params){"aba", "a*a", true}
+                                          (Params){"aba", "a*a", true},
+                                          (Params){"abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb", "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb", false}
                                          ));

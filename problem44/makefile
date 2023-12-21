@@ -4,5 +4,5 @@ all: test
 	./test
 
 test: main.cpp
-	g++ -o test -g ./main.cpp -lgtest_main -lgtest
+	clang++  -std=c++20 -o test -g ./main.cpp -lgtest_main -lgtest
 
